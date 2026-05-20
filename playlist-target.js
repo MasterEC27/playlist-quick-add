@@ -3,7 +3,7 @@
 // NAME: Playlist Target
 // AUTHOR: MasterEC
 // DESCRIPTION: Adds a custom button next to the playbar to quickly add the currently playing track to a designated target playlist with persistence and duplicate checking.
-// VERSION: 1.0.0
+// VERSION: 1.0.1
 
 (function PlaylistTarget() {
   /** @type {any} */
@@ -14,7 +14,7 @@
   let targetPlaylistUri = localStorage.getItem("playlist_target_uri");
 
   /** @type {string} */
-  let targetPlaylistName = localStorage.getItem("playlist_target_name") || "";
+  let targetPlaylistName = localStorage.getItem("playlist_target_name") || "Target Playlist";
 
   const BUTTON_ID = "playlist-target-custom-btn";
 
@@ -41,21 +41,6 @@
   }
 
   /**
-   * Resolves the playlist name using DOM metadata.
-   * @param {string} uri 
-   * @returns {string}
-   */
-  function resolvePlaylistName(uri) {
-    const id = uri.split(":").pop();
-    const element = document.querySelector(`[href*="${id}"], [data-uri="${uri}"]`);
-    if (element) {
-      const text = element.textContent?.trim();
-      if (text) return text;
-    }
-    return "Target Playlist";
-  }
-
-  /**
    * Initializes and registers the context menu items for playlists.
    * @returns {void}
    */
@@ -63,14 +48,24 @@
     new SpicetifyWindow.Spicetify.ContextMenu.Item(
       "Set as target playlist",
       /** @param {string[]} uris */
-      ([uri]) => {
+      async ([uri]) => {
         targetPlaylistUri = uri;
-        targetPlaylistName = resolvePlaylistName(uri);
+        targetPlaylistName = "Target Playlist"; // Fallback iniziale
 
-        // Persistent saving
+        // Persistent saving immediato dell'URI
         localStorage.setItem("playlist_target_uri", targetPlaylistUri);
-        localStorage.setItem("playlist_target_name", targetPlaylistName);
 
+        try {
+          // Chiediamo direttamente alle API di Spicetify i metadati reali della playlist
+          const metadata = await SpicetifyWindow.Spicetify.Platform.PlaylistAPI.getMetadata(uri);
+          if (metadata && metadata.name) {
+            targetPlaylistName = metadata.name;
+          }
+        } catch (e) {
+          console.error("[PlaylistTarget] Failed to fetch playlist metadata via API, using fallback.", e);
+        }
+
+        localStorage.setItem("playlist_target_name", targetPlaylistName);
         sendNotification(`Target destination set to: "${targetPlaylistName}"`);
         updateButtonState();
       },
@@ -87,7 +82,7 @@
       "Clear target playlist",
       () => {
         targetPlaylistUri = null;
-        targetPlaylistName = "";
+        targetPlaylistName = "Target Playlist";
 
         // Remove data
         localStorage.removeItem("playlist_target_uri");
@@ -110,6 +105,7 @@
       await SpicetifyWindow.Spicetify.Platform.PlaylistAPI.add(playlistUri, [trackUri], {
         position: { type: "BEFORE_ITEM", item: 0 }
       });
+      sendNotification(`Added to "${targetPlaylistName}"`);
     } catch (error) {
       console.error("[PlaylistTarget] Error adding track:", error);
       sendNotification("Error occurred while adding the track.");
