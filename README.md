@@ -12,13 +12,13 @@ Your choice is saved in localStorage, so it persists even after restarting Spoti
 
 ## Installation
 
-1. Go to your Spicetify Extensions directory:
-   - **Windows (PowerShell):** `shell:AppData\spicetify\Extensions`
-   - **Linux/MacOS:** `~/.config/spicetify/Extensions/`
+You can install this extension either automatically via Remote URL (recommended) or manually.
 
-2. Create a file named `playlist-target.js` and paste the source code inside it.
+### Method 1: Remote URL (Recommended & Easiest)
+This method allows Spicetify to fetch the extension directly from GitHub and keeps it updated automatically.
 
-3. Enable it via terminal:
+Run the following commands in your terminal (PowerShell on Windows, Terminal on Mac/Linux):
+
 ```bash
-spicetify config extensions playlist-target.js
+spicetify config extensions https://raw.githubusercontent.com/MasterEC27/spicetify-playlist-target/main/playlist-target.js
 spicetify apply
