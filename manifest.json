@@ -1,8 +1,10 @@
 {
   "name": "Playlist Target",
   "description": "Adds a playbar shortcut to instantly route tracks into a designated playlist with persistence and duplicate checks.",
+  "preview": "image.png",
   "main": "playlist-target.js",
-  "authors": ["MasterEC"],
-  "version": "1.0.1",
+  "authors": [
+        { "name": "MasterEC", "url": "https://github.com/MasterEC27" }
+    ],
   "readme": "README.md"
 }
