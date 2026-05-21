@@ -1,4 +1,4 @@
-# spicetify-playlist-target
+# Playlist Quick Add
 
 A Spicetify extension that adds a button to the now playing bar to instantly throw the current song into a specific playlist, without having to open context menus or clutter your Liked Songs.
 
