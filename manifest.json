@@ -1,5 +1,5 @@
 {
-  "name": "Playlist Target",
+  "name": "Playlist Quick Add",
   "description": "Adds a playbar shortcut to instantly route tracks into a designated playlist with persistence and duplicate checks.",
   "preview": "image.png",
   "main": "playlist-target.js",
